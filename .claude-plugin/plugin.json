@@ -1,0 +1,17 @@
+{
+  "name": "wincloud",
+  "displayName": "WinCloud",
+  "icon": "./icon.png",
+  "version": "0.1.8",
+  "description": "Ask about your hotel's bookings, pricing, room status and guests in WinCloud, in plain language.",
+  "author": {
+    "name": "RB Software, Inc.",
+    "url": "https://www.rbsgo.com"
+  },
+  "homepage": "https://www.rbsgo.com",
+  "repository": "https://github.com/Romeo-Bravo-Software/wincloud-plugin",
+  "supportUrl": "https://www.rbsgo.com",
+  "documentationUrl": "https://github.com/Romeo-Bravo-Software/wincloud-plugin#readme",
+  "license": "LicenseRef-RBS-Proprietary",
+  "keywords": ["hotel", "hospitality", "reservations", "rates", "inventory", "guest data"]
+}

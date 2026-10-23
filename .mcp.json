@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "wincloud": {
+      "type": "http",
+      "url": "https://api.wincloudone.com/mcp"
+    }
+  }
+}
