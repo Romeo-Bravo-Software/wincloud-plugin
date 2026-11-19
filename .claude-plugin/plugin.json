@@ -2,7 +2,7 @@
   "name": "wincloud",
   "displayName": "WinCloud",
   "icon": "./icon.png",
-  "version": "0.1.8",
+  "version": "0.1.2",
   "description": "Ask about your hotel's bookings, pricing, room status and guests in WinCloud, in plain language.",
   "author": {
     "name": "RB Software, Inc.",

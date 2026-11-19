@@ -7,17 +7,23 @@ description: Use when a user asks about cancellations or no-shows, the cancellat
 
 Follow `wincloud-report-format`.
 
+Resolve hotel names with `list_companies` before gathering data, and label every hotel by name in the output, as `wincloud` explains. For several hotels, use one row or series per hotel name.
+
 ## Gather
 
 1. **Cancellations:** `get_reservation_analytics`, `report` = `cancellations`. Its date filter is the **cancellation date**. Each row has arrival date, cancelled date, days before arrival and rooms cancelled.
 2. **No-shows:** same tool, `report` = `no-shows`. Its date filter is the **arrival date**.
-3. **Bookings, for a rate:** `report` = `bookings`, with its **booking date** filter. It leaves out reservations that are now Cancelled or NoShow, so it is not the total that was booked. For a rate on a matching basis, filter all three reports' rows to the same arrival window after reading them, then: cancellation rate = rooms cancelled ÷ (rooms on the bookings rows, booked plus availed + rooms cancelled + no-show rooms); no-show rate = no-show rooms ÷ the same total. Read the bookings and cancellations reports over a date range wide enough to cover every booking for those arrivals. If you can't, give counts, not a rate, and say why.
+3. **Bookings, for a rate:** `report` = `bookings`, with its **booking date** filter. It leaves out reservations that are now Cancelled or NoShow, so it is not the total that was booked. It still includes waitlisted and turned-away reservations, which carry no status, so say the rate's base may include them. To compute a rate:
+   - Read the bookings and cancellations reports over a date range wide enough to cover every booking for the arrivals in question. If you can't, give counts, not a rate, and say why.
+   - Keep only rows from all three reports that arrive in the same window.
+   - Total = rooms on the bookings rows (booked plus availed) + rooms cancelled + no-show rooms.
+   - Cancellation rate = rooms cancelled ÷ total; no-show rate = no-show rooms ÷ total.
 4. Read every page and add the rows up. Say if you stopped early.
 
 ## Measure
 
 - **Counts:** rooms cancelled, no-show rooms, reservations affected.
-- **Lead time of cancellations:** bands (same day, 1–3, 4–7, 8–14, 15+ days before arrival). Late cancellations (under 7 days) are the costly ones: they leave rooms hard to resell.
+- **Lead time of cancellations:** bands (same day, 1–3, 4–7, 8–14, 15+ days before arrival). Late cancellations (7 days or fewer, the first three bands) are the costly ones: they leave rooms hard to resell.
 - **Where it concentrates:** by room type, arrival month or week.
 - **Reasons and sources:** `get_reservation` shows the cancellation reason and source for one booking. For a pattern, sample 5–10 recent cancellations from `search_bookings` (`cancelledFrom`/`cancelledTo`, status `Cancelled`), and say it is a sample.
 

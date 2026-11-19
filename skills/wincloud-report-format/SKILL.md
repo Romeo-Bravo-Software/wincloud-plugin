@@ -52,6 +52,8 @@ Before showing a chart, check its title, categories, series names and values aga
 - Colours: primary #003352 (navy), secondary #63e7a4 (green). Navy for the main series, green for the comparison or forecast, then tints of navy and grey for more series. One meaning per colour for the whole conversation.
 - Font: Century Gothic where the environment lets you choose one.
 - Title says what and where, with the location as `list_companies` returns it ("Bookings by month, Grand Hotel, Q1 2026"). Label axes with units, print the values on the bars or points, start bar charts at zero.
+- **Hotel names, never codes.** Wherever a location appears (headline, KPI row, chart title, series names, legend, table rows and columns, attention items) use its name from `list_companies`, such as "Grand Hotel", not "WS". When comparing hotels, name each series and row by hotel. The code may appear once, in brackets, in "Basis and caveats".
+- Before showing a chart or table, check that no label is a bare company code, and replace any you find with the name.
 - Forecasts are a dashed line or lighter bars, with the actual part solid. Say which part is which.
 - Make it readable without colour alone: legend and direct labels.
 
@@ -62,9 +64,18 @@ Before showing a chart, check its title, categories, series names and values aga
 - Compare like with like: same length of period, same hotel.
 - Round only for display; do the sums on the full values.
 
+## Check the data before reporting
+
+Look for records that would mislead the reader, and list any you find under "Basis and caveats" so the manager can check them in WinCloud. Don't drop or correct them yourself.
+
+- A booking still `CheckedIn` whose departure date has passed, or still expected whose arrival date has passed.
+- A room count far above the hotel's usual (for example one no-show of 18 rooms at a 40-room hotel).
+- Room counts that don't add up (occupied plus vacant less than total rooms).
+
 ## Honesty
 
 - Report what the tools returned. Mark every derived figure ("calculated from…") and every projection "estimate".
+- Money figures are the **booked rate** stored on the reservation, not money charged or collected; WinCloud's payments are not available here. Label them so ("ADR from booked rates"), with the currency and how the average was weighted.
 - If you stopped before the last page of results, say the figure covers only what you read.
 - Figures from this plugin support decisions; they don't replace the hotel's own reports. Remind the user to verify before using them for pricing, budgeting or anything contractual.
-- Never show payment details. Show guest contact details only when the user asked for one guest's profile.
+- Never show payment details. Guest contact details are never returned, so never show or guess them.
