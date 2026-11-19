@@ -39,7 +39,7 @@ def frame(spec, body, legend):
         head += text(x + 18, H - 14, name, 12)
         x += 30 + 7 * len(name)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" '
-            f'font-family="{FONT}" role="img" aria-label="{escape(spec["title"])}">'
+            f'font-family="{FONT}" role="img" aria-label="{escape(spec["title"], {chr(34): "&quot;"})}">'
             f'<rect width="{W}" height="{H}" fill="#ffffff"/>{head}{body}</svg>')
 
 
@@ -62,6 +62,8 @@ def bar(spec):
     body = axes(spec, vmax, left, top, right, bottom)
     slot = (right - left) / len(cats)
     bw = min(48 if len(series) > 1 else 90, slot * 0.8 / len(series))
+    skip = max(1, len(cats) // 12)
+    labels = bw - 2 >= 7 * max(len(fmt(v)) for s in series for v in s["values"])  # only when every value fits its bar
     for ci, c in enumerate(cats):
         x0 = left + slot * ci + (slot - bw * len(series)) / 2
         for si, s in enumerate(series):
@@ -69,14 +71,17 @@ def bar(spec):
             h = (bottom - top) * v / vmax
             x = x0 + bw * si
             body += f'<rect x="{x:.1f}" y="{bottom - h:.1f}" width="{bw - 2:.1f}" height="{h:.1f}" fill="{PALETTE[si % len(PALETTE)]}"/>'
-            body += text(x + (bw - 2) / 2, bottom - h - 5, fmt(v), 11, "middle")
-        body += text(left + slot * ci + slot / 2, bottom + 18, c, 12, "middle")
+            if labels:
+                body += text(x + (bw - 2) / 2, bottom - h - 5, fmt(v), 11, "middle")
+        if ci % skip == 0:
+            body += text(left + slot * ci + slot / 2, bottom + 18, c, 12, "middle")
     return frame(spec, body, [s["name"] for s in series] if len(series) > 1 else [])
 
 
 def hbar(spec):
-    cats, series = spec["categories"], spec["series"]
-    left, top, right, bottom = 150, 70, W - 60, H - 50
+    cats = [c if len(c) <= 30 else c[:29] + "…" for c in map(str, spec["categories"])]
+    series = spec["series"]
+    left, top, right, bottom = 24 + 7 * max(len(c) for c in cats), 70, W - 60, H - 50
     vmax = nice_max(max(max(s["values"]) for s in series))
     slot = (bottom - top) / len(cats)
     bh = min(26, slot * 0.8 / len(series))
@@ -118,14 +123,20 @@ def line(spec):
 def donut(spec):
     vals, cats = spec["series"][0]["values"], spec["categories"]
     total, cx, cy, r = sum(vals), 230, 235, 110
+    if total <= 0:
+        sys.exit("donut needs at least one value above zero; say there is nothing to chart instead")
     body, a = "", -math.pi / 2
     for i, v in enumerate(vals):
         b = a + 2 * math.pi * v / total
         large = 1 if b - a > math.pi else 0
         p = lambda t, rad: (cx + rad * math.cos(t), cy + rad * math.sin(t))
         (x1, y1), (x2, y2), (x3, y3), (x4, y4) = p(a, r), p(b, r), p(b, r * .58), p(a, r * .58)
-        body += (f'<path d="M{x1:.1f},{y1:.1f} A{r},{r} 0 {large} 1 {x2:.1f},{y2:.1f} L{x3:.1f},{y3:.1f} '
-                 f'A{r * .58:.1f},{r * .58:.1f} 0 {large} 0 {x4:.1f},{y4:.1f}Z" fill="{PALETTE[i % len(PALETTE)]}" stroke="#fff"/>')
+        if v == total:  # an arc whose ends meet draws nothing, so the only non-zero part is a full ring
+            body += (f'<circle cx="{cx}" cy="{cy}" r="{r * .79:.1f}" fill="none" '
+                     f'stroke="{PALETTE[i % len(PALETTE)]}" stroke-width="{r * .42:.1f}"/>')
+        else:
+            body += (f'<path d="M{x1:.1f},{y1:.1f} A{r},{r} 0 {large} 1 {x2:.1f},{y2:.1f} L{x3:.1f},{y3:.1f} '
+                     f'A{r * .58:.1f},{r * .58:.1f} 0 {large} 0 {x4:.1f},{y4:.1f}Z" fill="{PALETTE[i % len(PALETTE)]}" stroke="#fff"/>')
         ly = 130 + 34 * i
         body += f'<rect x="440" y="{ly - 11}" width="14" height="14" rx="2" fill="{PALETTE[i % len(PALETTE)]}"/>'
         body += text(462, ly, f"{cats[i]}: {fmt(v)} ({v / total:.0%})", 13)
@@ -134,8 +145,19 @@ def donut(spec):
     return frame(spec, body, [])
 
 
+def check(spec):
+    n = len(spec["categories"])
+    for s in spec["series"]:
+        name, vals = s.get("name", "series"), s["values"]
+        if len(vals) != n:
+            sys.exit(f"{name} has {len(vals)} values but there are {n} categories; give one value per category")
+        if any(type(v) not in (int, float) or v < 0 for v in vals):
+            sys.exit(f"{name} has a value that is not a number of zero or more; charts cannot draw it")
+
+
 def main():
     spec = json.load(open(sys.argv[1]))
+    check(spec)
     svg = {"bar": bar, "hbar": hbar, "line": line, "donut": donut}[spec["type"]](spec)
     out = sys.argv[2]
     open(out, "w").write(svg)

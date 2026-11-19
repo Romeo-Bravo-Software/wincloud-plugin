@@ -7,6 +7,8 @@ description: Use when a user asks how full the hotel will be, for an occupancy f
 
 Follow `wincloud-report-format`. This is an estimate. Say so in the headline area and again in the caveats.
 
+Resolve hotel names with `list_companies` before gathering data, and label every hotel by name in the output, as `wincloud` explains. For several hotels, use one row or series per hotel name.
+
 ## Capacity
 
 Total rooms = the sum of total rooms across room types from `get_inventory` (or `list_room_types`). `list_companies` also gives each location's room count; if the two differ, use the room-type sum and say so. Use one figure for the whole window, and say that out-of-order rooms are not known.
@@ -14,8 +16,8 @@ Total rooms = the sum of total rooms across room types from `get_inventory` (or 
 ## Step 1: Rooms on the books, per night
 
 1. Choose the window (default: next 30 days, at most 90). Turn it into exact dates.
-2. Call `search_bookings` with `departureFrom` = window start and `arrivalTo` = window end. This returns every stay that touches the window, including ones that began earlier. Read all pages; if there are too many to read, say the forecast covers only the pages read and narrow the window.
-3. Drop Cancelled, NoShow, TurnAway and WaitingList. Keep Confirmed, Tentative, Provisional, CheckedIn.
+2. Call `search_bookings` with `departureFrom` = window start and `arrivalTo` = window end. This returns every stay that touches the window, including ones that began earlier. Read all pages; if there are more than 15, say the forecast covers only the pages read and narrow the window.
+3. Keep only Confirmed, Tentative, Provisional and CheckedIn; drop every other status (Cancelled, NoShow, TurnAway, WaitingList, CheckedOut, Unknown).
 4. For each booking, count its rooms on every night from arrival up to, but not including, departure. Add them up per night. A night is occupied from the arrival date; the departure date is free.
 5. On-the-books occupancy per night = rooms on the books ÷ total rooms.
 

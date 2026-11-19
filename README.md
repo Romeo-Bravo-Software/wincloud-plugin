@@ -1,9 +1,9 @@
 # WinCloud
 
-Read hotel bookings, rates, room inventory and guest reservation history from WinCloud, the hotel
-management platform by RB Software, Inc., without leaving Claude. Ask in plain language, for example
-"find bookings made this month for my hotel" or "how many rooms are vacant right now", and Claude
-answers from your own WinCloud data. Built-in skills also produce briefings, forecasts and KPI reports.
+Read hotel bookings, rates, room inventory, room and revenue performance, outlet menus and guest profiles from WinCloud, the hotel
+management platform by RB Software, Inc., without leaving Claude. Ask in plain language, for example "find bookings made
+this month for my hotel" or "how many rooms are vacant right now", and Claude answers from your own
+WinCloud data.
 
 This plugin is read-only. It cannot create, change or cancel bookings.
 
@@ -44,33 +44,40 @@ permission on your sign-in, so you may see only some of the [tools](#tools) belo
 
 | Tools | Permission |
 |---|---|
-| Search bookings | `reservations:read` |
-| Get rate plans, Search room tariffs, List room types | `rates:read` |
+| Search bookings, Get reservation, Get reservation analytics, Get booking summary | `reservations:read` |
+| Get rate plans, Search room tariffs, List room types, List master rates, Get rate configuration, List rate templates, List rooms, List room features, Get room performance | `rates:read` |
+| Get property configuration | `rates:read` or `pos:read` |
 | Get inventory | `inventory:read` |
-| Search guests, Get guest reservations | `guests:read` |
+| Search guests, Get guest reservations, Get guest | `guests:read` |
+| Get outlet menu | `pos:read` |
+| List property locations | none |
 
-The permissions for the other tools are not listed here yet. If a tool is missing, ask your WinCloud
-administrator for the permission, then sign in again.
+If a tool is missing, ask your WinCloud administrator for the permission, then sign in again.
 
 ## Tools
 
 | Tool | What it returns |
 |---|---|
-| List companies | The hotels (property locations) your sign-in can see |
-| Search bookings | Bookings filtered by the date made, arrival, departure or cancellation date, by status, reservation number or guest name |
-| Get reservation | One reservation in full: rooms, times, rate plan, source, cancellation reason |
-| Get reservation analytics | One row per reservation, for booking pace, lead time, ADR, cancellations and no-shows |
+| Search bookings | Bookings by booked, arrival, departure or cancellation date, status, booking number or guest name. No contact details |
+| Get reservation | Every reservation sharing one booking number (several for a group), in full. No contact details, deposit or special requests |
+| Get reservation analytics | Booking, cancellation and no-show rows, one per reservation dated by its arrival, with lead time, rooms and ADR. No guest names |
+| Get booking summary | Arrival and departure room counts for a date range: arrived, walk-ins, still expected, checked out, still due to leave. Totals only |
 | Get rate plans | Room types, rate types, rate plans and channels, without prices |
 | Search room tariffs | Nightly tariffs and restrictions for a date range, room type and rate type. Weekend tariffs aren't included |
 | List room types | Room types, room counts and base tariffs |
-| List master rates | The master rates other rates are derived from |
-| Get rate configuration | The formulas that derive a rate from its master rate, not prices |
-| List rate templates | When each set of rate formulas applies (days, seasons) |
-| List rooms | Physical rooms: numbers, floors, beds, and WinCloud's stored room status code |
-| List room features | The amenities the hotel has set up, not which rooms have them |
+| List master rates | Master rate types that other rates derive from, without prices |
+| Get rate configuration | Weekday and weekend adjustments each derived rate applies to its master rate |
+| List rate templates | When each set of rate formulas applies, by weekday and yearly dates |
+| List rooms | Physical rooms with room type, floor, bed type and status code |
+| List room features | The room features (amenities) set up, not which rooms have them |
+| Get room performance | Actual occupancy, ADR, RevPAR and revenue for past dates, month and year to date, by room type, against an earlier period |
+| Get property configuration | Outlets, active room types, and whether WiFi, TV and GST are set up |
 | Get inventory | Today's room-status snapshot. Future availability isn't available |
-| Search guests | Guest profiles by name, email or mobile (at least 3 characters), with the guest's email and mobile |
-| Get guest reservations | A guest's past and upcoming reservations |
+| Search guests | Guest profiles by name, email or mobile, with name, nationality and stay history. No contact details |
+| Get guest reservations | A guest's reservations, filtered by status or arrival date |
+| Get guest | One guest's profile: nationality, language, preferences, stay totals and newest stays, and on request their spend. No contact details or allergies |
+| Get outlet menu | One outlet's menu items with group, price and status. Not sales or stock |
+| List property locations | The hotels (property locations) your sign-in can see, with the company ID the other tools need |
 
 ## Skills
 
@@ -107,7 +114,7 @@ git-ignored.
 
 ## Privacy
 
-Search guests returns a guest's email address and mobile number. Billing details are never returned to Claude. The data Claude
+Guest addresses, email addresses, phone numbers and billing details are never returned to Claude. The data Claude
 reads comes from WinCloud and is governed by your organization's agreement with RB Software, Inc.
 
 ## Support
