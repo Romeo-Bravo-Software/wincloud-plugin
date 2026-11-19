@@ -35,9 +35,9 @@ Claude sends your requests there over HTTPS and receives only the results you ar
 sends data to no other service.
 
 The one local component is `skills/wincloud-report-format/scripts/chart.py`. When a report needs a chart,
-Claude may run it with `python3` to turn a small JSON spec of the numbers into an SVG file. It uses only the
-Python standard library, reads the spec file Claude writes, writes the output file, and makes no network
-calls. It is the only code the plugin runs on your machine.
+Claude may run it with `python3` to turn a small JSON spec of the numbers into an SVG file, plus a PNG beside it
+when the `cairosvg` package is already installed. It installs nothing, reads the spec file Claude writes, writes
+only those output files, and makes no network calls. It is the only code the plugin runs on your machine.
 
 You see only the hotels your WinCloud account can access. Every tool except List companies needs a
 permission on your sign-in, so you may see only some of the [tools](#tools) below:
